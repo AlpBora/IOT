@@ -26,8 +26,8 @@ def get_periodogram_psd_with_len(sig, sig_len,sample_rate, center_freq):
     f = np.arange(sample_rate / -2.0, sample_rate / 2.0, sample_rate / sig_len) + center_freq
     return f, psd_shiifted
 
-def fileread(file):
-    samples = np.fromfile(file, dtype= 'int32')
+def fileread(file,dtype):
+    samples = np.fromfile(file, dtype= dtype)
     return samples
 
 
@@ -115,15 +115,15 @@ snr = signaltonoise(arr)
 
 if __name__ == '__main__':
 
-    directory = r'C:\Users\Alp Bora\Desktop\          \IOT\Lora\Records\Bw500Cr45Sf128\Burst'
+    directory = r'/home/mp3/Desktop/Lora Dataset/RFFP-dataset/Diff_Days_Outdoor_Setup/Day1/Device1/Record'
     file_path = os.listdir(directory)
 
-    center_freq = 868e6
-    sample_rate = 5e6
+    center_freq = 915e6
+    sample_rate = 1e6
     cutoff_hz = 500
 
     for i in range(np.size(file_path)):
-        signal = fileread(directory + '\\' + file_path[i])
+        signal = fileread(directory + '/' + file_path[i], 'int32')
         signal_iq = convert_iq(signal)
         sample_IQ = sampling(signal_iq, 0, np.size(signal_iq))  # sınırlar
         moving = show_signal(sample_IQ, method='MA')
