@@ -6,7 +6,7 @@ import os
 
 
 def writer(dir, data):
-    with open(dir, 'db') as file_handler:
+    with open(dir, 'wb') as file_handler:
         file_handler.write(data)
 
 
@@ -48,19 +48,20 @@ def get_moving(iq):
 
 
 if __name__ == '__main__':
-    #input_path = r'C:\Users\Alp Bora\Desktop\IOT\Lora\Records\Bw500Cr45Sf128\Record' #records are located here
-    #folder_name = r'C:\\Users\Alp Bora\Desktop\IOT\Lora\Records\Bw500Cr45Sf128\Burst\\' #burst files will be located here
-    input_path = r'C:\Users\Alp Bora\Desktop\IOT\Lora\Lora Dataset\RFFP-dataset\Diff_Days_Outdoor_Setup\Day1\Device1\Record'
-    folder_name = r'C:\Users\Alp Bora\Desktop\IOT\Lora\Lora Dataset\RFFP-dataset\Diff_Days_Outdoor_Setup\Day1\Device1\Burst'
+
+    input_path = r'/home/mp3/Desktop/Lora Dataset/RFFP-dataset/Diff_Days_Outdoor_Setup/Day1/Device1/Record'
+    folder_name = r'/home/mp3/Desktop/Lora Dataset/RFFP-dataset/Diff_Days_Outdoor_Setup/Day1/Device1/Burst'
     file_names = os.listdir(input_path)
 
-    bin_files = [file for file in file_names if 'bin' in file[-3:]]  #list comprehension
-
+    bin_files = [file for file in file_names if 'dat' in file[-3:]]  #list comprehension
+    print(bin_files)
     for i in range(np.size(bin_files)):
 
-        input_signal = dt.fileread(input_path + '\\' + bin_files[i], 'int32') #IQIQIQIQ
+        input_signal = dt.fileread(input_path + '/' + bin_files[i]) #IQIQIQIQ
         iq_signal = dt.convert_iq(input_signal) #Q + Ij
         iq_moving = get_moving(iq_signal)
+        #plt.plot(iq_moving)
+        #plt.show()
         threshold = find_threshold(iq_moving)
         print(threshold)
         burst_array = cut(iq_moving, threshold)
@@ -69,7 +70,7 @@ if __name__ == '__main__':
         for j in range(len(burst_array)):
             data = margin_data(burst_array, j)
             signal = input_signal[2*data[0] - 10000:2*data[1] + 10000]
-            #arrplot(signal)
+            arrplot(signal)
             burst_no = '{:05d}'.format(j+1)
             record_no = '{:04d}'.format(i+1)
             output_path = folder_name + bin_files[i].replace('.dat', '') + '_burst__' + str(burst_no) + '.dat'

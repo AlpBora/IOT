@@ -26,8 +26,8 @@ def get_periodogram_psd_with_len(sig, sig_len,sample_rate, center_freq):
     f = np.arange(sample_rate / -2.0, sample_rate / 2.0, sample_rate / sig_len) + center_freq
     return f, psd_shiifted
 
-def fileread(file,dtype):
-    samples = np.fromfile(file, dtype= dtype)
+def fileread(file):
+    samples = np.fromfile(file, dtype= 'int32')
     return samples
 
 
