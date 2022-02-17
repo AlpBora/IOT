@@ -10,10 +10,13 @@ def writer(dir, data):
         file_handler.write(data)
 
 
-def find_threshold(signal):
-    #TODO 1.5 * moving avarage
-    avg = mean(signal)
-    return avg * 1.5
+def find_threshold(iq_moving):
+    max_data = max(iq_moving)
+    min_data = min(iq_moving)
+    sub_max_min = max_data - min_data
+    num_list = np.linspace(sub_max_min*0.02+min_data, sub_max_min*0.1+min_data)
+    avg = np.mean(num_list)
+    return avg
 
 
 def margin_data(array, i):
@@ -42,7 +45,7 @@ def cut(iq_moving, threshold):
 
 
 def get_moving(iq):
-    iq_abs = np.abs(iq[:100000000])
+    iq_abs = np.abs(iq[:1000000000])
     iq_moving = dt.moving_average(iq_abs, 250)
     return iq_moving
 
@@ -50,26 +53,26 @@ def get_moving(iq):
 if __name__ == '__main__':
 
     input_path = r'/home/mp3/Desktop/Lora Dataset/RFFP-dataset/Diff_Days_Outdoor_Setup/Day1/Device1/Record'
-    folder_name = r'/home/mp3/Desktop/Lora Dataset/RFFP-dataset/Diff_Days_Outdoor_Setup/Day1/Device1/Burst'
+    folder_name = r'/home/mp3/Desktop/Lora Dataset/RFFP-dataset/Diff_Days_Outdoor_Setup/Day1/Device1/Burst/'
     file_names = os.listdir(input_path)
 
     bin_files = [file for file in file_names if 'dat' in file[-3:]]  #list comprehension
     print(bin_files)
     for i in range(np.size(bin_files)):
 
-        input_signal = dt.fileread(input_path + '/' + bin_files[i]) #IQIQIQIQ
+        input_signal = dt.fileread(input_path + '/' + bin_files[i],dtype='int32') #IQIQIQIQ
         iq_signal = dt.convert_iq(input_signal) #Q + Ij
         iq_moving = get_moving(iq_signal)
-        #plt.plot(iq_moving)
-        #plt.show()
+
         threshold = find_threshold(iq_moving)
         print(threshold)
         burst_array = cut(iq_moving, threshold)
         print(burst_array)
+        print(len(burst_array))
 
         for j in range(len(burst_array)):
             data = margin_data(burst_array, j)
-            signal = input_signal[2*data[0] - 10000:2*data[1] + 10000]
+            signal = input_signal[2*(data[0] - 10000):2*(data[1] + 10000)]
             arrplot(signal)
             burst_no = '{:05d}'.format(j+1)
             record_no = '{:04d}'.format(i+1)
