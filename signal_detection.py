@@ -122,10 +122,10 @@ if __name__ == '__main__':
     sample_rate = 1e6
     cutoff_hz = 500
 
-    for i in range(np.size(file_path)):
+    for i in range(1):
         signal = fileread(directory + '/' + file_path[i], 'int32')
         signal_iq = convert_iq(signal)
-        sample_IQ = sampling(signal_iq, 0, np.size(signal_iq))  # sınırlar
+        sample_IQ = sampling(signal_iq, 1000, 100000)  # sınırlar
         moving = show_signal(sample_IQ, method='MA')
         moving_iq = show_signal(signal_iq, method='MA')
         psd_filtered = check_signal(sample_IQ, center_freq, sample_rate, cutoff_hz, filter='FIR', method='Window', get='psd filtered')
@@ -133,9 +133,14 @@ if __name__ == '__main__':
         # IQ_noise = fileread(directory2 + '\\' + file_path2[0])
         # moving_noise = show_signal(IQ_noise, method='MA')
 
-    data = [[psd[0], psd[1]], moving, signal, [psd_filtered[0], psd_filtered[1]]]
-    get = ['PSD', 'Moving Average', 'Signal', 'PSD Filtered']
-    signal_plot(data, get)
+    plt.plot(np.abs(sample_IQ))
+    plt.show()
+
+
+    #data = [[psd[0], psd[1]], moving, signal, [psd_filtered[0], psd_filtered[1]]]
+    #get = ['PSD', 'Moving Average', 'Signal', 'PSD Filtered']
+    #signal_plot(data, get)
+
 
 
 
