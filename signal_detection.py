@@ -26,8 +26,8 @@ def get_periodogram_psd_with_len(sig, sig_len,sample_rate, center_freq):
     f = np.arange(sample_rate / -2.0, sample_rate / 2.0, sample_rate / sig_len) + center_freq
     return f, psd_shiifted
 
-def fileread(file,dtype):
-    samples = np.fromfile(file, dtype= dtype)
+def fileread(file):
+    samples = np.fromfile(file, dtype= 'float32')
     return samples
 
 
@@ -123,7 +123,7 @@ if __name__ == '__main__':
     cutoff_hz = 500
 
     for i in range(1):
-        signal = fileread(directory + '/' + file_path[i], 'int32')
+        signal = fileread(directory + '/' + file_path[i])
         signal_iq = convert_iq(signal)
         sample_IQ = sampling(signal_iq, 1000, 100000)  # sınırlar
         moving = show_signal(sample_IQ, method='MA')
